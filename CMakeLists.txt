@@ -14,20 +14,20 @@ if(MSVC)
 endif()
 
 #---- Include boost to add coroutines ----
-find_package(Boost COMPONENTS coroutine QUIET)
-if(Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS})
-    if(NOT Boost_VERSION VERSION_LESS 105900)
-        message(STATUS "Found boost::coroutine2.")
-        add_definitions(-DBT_BOOST_COROUTINE2)
-        set(BT_COROUTINES true)
-    elseif(NOT Boost_VERSION VERSION_LESS 105300)
-        message(STATUS "Found boost::coroutine.")
-        include_directories(${Boost_INCLUDE_DIRS})
-        add_definitions(-DBT_BOOST_COROUTINE)
-        set(BT_COROUTINES true)
-    endif()
-endif()
+# find_package(Boost COMPONENTS coroutine QUIET)
+# if(Boost_FOUND)
+#     include_directories(${Boost_INCLUDE_DIRS})
+#     if(NOT Boost_VERSION VERSION_LESS 105900)
+#         message(STATUS "Found boost::coroutine2.")
+#         add_definitions(-DBT_BOOST_COROUTINE2)
+#         set(BT_COROUTINES true)
+#     elseif(NOT Boost_VERSION VERSION_LESS 105300)
+#         message(STATUS "Found boost::coroutine.")
+#         include_directories(${Boost_INCLUDE_DIRS})
+#         add_definitions(-DBT_BOOST_COROUTINE)
+#         set(BT_COROUTINES true)
+#     endif()
+# endif()
 
 if(NOT DEFINED BT_COROUTINES)
     message(STATUS "Coroutines disabled. Install Boost to enable them (version 1.59+ recommended).")
@@ -44,21 +44,21 @@ option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
 #---- Find other packages ----
 find_package(Threads)
-find_package(ZMQ)
+# find_package(ZMQ)
 
 list(APPEND BEHAVIOR_TREE_EXTERNAL_LIBRARIES
     ${CMAKE_THREAD_LIBS_INIT}
     ${CMAKE_DL_LIBS}
     ${Boost_LIBRARIES} )
 
-if( ZMQ_FOUND )
-    message(STATUS "ZeroMQ found.")
-    add_definitions( -DZMQ_FOUND )
-    list(APPEND BT_SOURCE src/loggers/bt_zmq_publisher.cpp)
-    list(APPEND BEHAVIOR_TREE_EXTERNAL_LIBRARIES ${ZMQ_LIBRARIES})
-else()
-    message(WARNING "ZeroMQ NOT found. Skipping the build of [PublisherZMQ] and [bt_recorder].")
-endif()
+# if( ZMQ_FOUND )
+#     message(STATUS "ZeroMQ found.")
+#     add_definitions( -DZMQ_FOUND )
+#     list(APPEND BT_SOURCE src/loggers/bt_zmq_publisher.cpp)
+#     list(APPEND BEHAVIOR_TREE_EXTERNAL_LIBRARIES ${ZMQ_LIBRARIES})
+# else()
+#     message(WARNING "ZeroMQ NOT found. Skipping the build of [PublisherZMQ] and [bt_recorder].")
+# endif()
 
 set(BEHAVIOR_TREE_LIBRARY ${PROJECT_NAME})
 
@@ -224,15 +224,15 @@ target_include_directories(${BEHAVIOR_TREE_LIBRARY} PUBLIC
     $<INSTALL_INTERFACE:include>
     ${BUILD_TOOL_INCLUDE_DIRS})
 
-if( ZMQ_FOUND )
-    target_compile_definitions(${BEHAVIOR_TREE_LIBRARY} PUBLIC ZMQ_FOUND)
-endif()
+# if( ZMQ_FOUND )
+#     target_compile_definitions(${BEHAVIOR_TREE_LIBRARY} PUBLIC ZMQ_FOUND)
+# endif()
 
 if(MSVC)
     target_compile_options(${BEHAVIOR_TREE_LIBRARY} PRIVATE /W4 /WX)
 else()
     target_compile_options(${BEHAVIOR_TREE_LIBRARY} PRIVATE
-        -Wall -Wextra -Werror=return-type)
+        -Wall -Wextra -Werror=return-type -fPIC -s RELOCATABLE=1)
 endif()
 
 ######################################################
